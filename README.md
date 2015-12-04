@@ -14,6 +14,7 @@
  - 0.1.1 Bugfix for default options if the init function was never called
  - 0.1.2 Readme edits
  - 0.1.3 Fixed a encoding bug in serving cached file system content
+ - 0.1.4 Added a git repository to package.json :)
 
 ## What it does
 
