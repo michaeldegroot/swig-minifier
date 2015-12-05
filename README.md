@@ -17,6 +17,7 @@
  - 0.1.4 Added a git repository to package.json :)
  - 0.1.5 File system cache will now create a folder in the os.tmpdir() location via the path module, The init function is now required to be executed, Forgot to throw a error in the memory cache code, Removed some unused variables
  - 0.1.6 Added the optional use of using redis as a cache and cleaned up the code a bit
+ - 0.1.7 You dont have to have redis run to use file or memory cache
  
 ## What it does
 

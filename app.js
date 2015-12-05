@@ -4,11 +4,12 @@ var md5 = require('md5');
 var fs = require('fs');
 var os = require('os');
 var path = require('path');
-var redis = require("redis"), client = redis.createClient();
-client.on("error", function (err) { throw err;});
+var redis = require("redis");
 var NodeCache = require( "node-cache" );
 var myCache = new NodeCache({ stdTTL: 0, checkperiod: 120 });
 var options;
+var definedRedis = false;
+var client;
 
 exports.init = function(sets){
 	var folder = path.join(os.tmpdir(),"swig-minifier");
@@ -51,6 +52,11 @@ exports.engine = function(pathName, locals, cb) {
 			return;
 		}
 		if(options.cacheType=="redis"){
+			if(!definedRedis){
+				client = redis.createClient();
+				client.on("error", function (err) { throw err;});
+				definedRedis = true;
+			}
 			client.get(key, function(err, value) {
 				if(err) throw err;
 				if(value) return cb(err, value);

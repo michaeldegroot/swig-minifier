@@ -2,7 +2,7 @@ var express = require('express');
 var app = require('express')();
 var swigMinifier = require('./app');
 
-swigMinifier.init({cacheType:"redis"});
+swigMinifier.init({cacheType:"file"});
 
 app.engine('html', swigMinifier.engine);
 app.set('view engine', 'html');
