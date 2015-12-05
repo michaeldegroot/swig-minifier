@@ -1,6 +1,6 @@
 {
   "name": "swig-minifier",
-  "version": "0.1.9",
+  "version": "0.2.0",
   "description": "Automaticly cache and minify html output rendered by swig",
   "main": "app.js",
   "scripts": {
@@ -21,7 +21,7 @@
     "html-minifier": "^1.0.0",
     "node-cache": "^3.0.0",
     "redis": "^2.4.2",
-    "sha512": "0.0.1",
+    "sha256": "^0.2.0",
     "swig": "^1.4.2"
   },
   "repository": {
