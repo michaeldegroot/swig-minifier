@@ -1,12 +1,12 @@
 var htmlminify = require('html-minifier').minify;
 var swig = require('swig');
-var md5 = require('md5');
 var fs = require('fs');
 var os = require('os');
 var path = require('path');
 var redis = require("redis");
 var NodeCache = require( "node-cache" );
 var myCache = new NodeCache({ stdTTL: 0, checkperiod: 120 });
+var sha256 = require('sha256');
 var options;
 var definedRedis = false;
 var client;
@@ -34,7 +34,7 @@ exports.engine = function(pathName, locals, cb) {
 		if(err) throw err;
 		if(!options.cacheType) options.cacheType = "file";
         var html;
-		var key = md5(result);
+		var key = sha256(result);
 		if(options.cacheType=="file"){
 			var file = path.join(os.tmpdir(),"swig-minifier",key+".html");
 			fs.readFile(file, function(err,data){

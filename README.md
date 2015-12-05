@@ -19,6 +19,7 @@
  - 0.1.6 Added the optional use of using redis as a cache and cleaned up the code a bit
  - 0.1.7 You dont have to have redis run to use file or memory cache
  - 0.1.8 Added a clearCache function
+ - 0.1.9 Using sha256 for cache key generation instead of md5 (less collision chance)
  
 ## What it does
 
