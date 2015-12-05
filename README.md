@@ -18,6 +18,7 @@
  - 0.1.5 File system cache will now create a folder in the os.tmpdir() location via the path module, The init function is now required to be executed, Forgot to throw a error in the memory cache code, Removed some unused variables
  - 0.1.6 Added the optional use of using redis as a cache and cleaned up the code a bit
  - 0.1.7 You dont have to have redis run to use file or memory cache
+ - 0.1.8 Added a clearCache function
  
 ## What it does
 
@@ -49,6 +50,10 @@ var swigMinifier = require('swig-minifier');
 var options = {cacheType:"memory"}; // Choose to cache to memory
 var options = {cacheType:"file"}; // Choose to cache to file system
 var options = {cacheType:"redis"}; // Choose to cache with redis
+
+// swig-minifier clears the file cache when the init function is called
+// to make swig-minifier not purge file cache on init call, pass this in the options object:
+var options = {dontPurge:true};
 
 // Important: Call the init function before using swigMinifier.engine
 swigMinifier.init(options);
