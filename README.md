@@ -77,7 +77,7 @@ swigMinifier.clearCache();
 
 ##### Options:
     cacheType: file, redis, memory, none
-    hashGen: md5, sha512, 
+    hashGen: md5, sha512, sha256
 Call this before using the .engine function and you can setup some options for swig-minifier. If you do not call init, default settings will be used:
 
 __Default settings if init is never called:__
