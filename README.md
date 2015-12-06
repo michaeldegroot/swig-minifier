@@ -26,7 +26,7 @@
  - 0.2.3 You can now tell swig-minifier to not use a cache system at all and just minify.
  - 0.2.4 Hash generation changed a bit: instead of using the basename it now uses full path. This is to avoid serving cached content when 2 html files have the same name but have unique content and are stored in different directories. 
  - 0.2.5 Added API to docs :). Added a hashGen option to the init function. You can now specify what algorithm to use to generate the hash cache key. Options are: md5, sha256, sha512
- - 0.2.6 Cleaned up readme
+ - 0.2.7 Cleaned up readme
  
 ## What it does
 
