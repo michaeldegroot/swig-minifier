@@ -23,6 +23,7 @@
  - 0.2.1 Instead of generating a hash from the html contents of the requested page (amount of bytes = yikes) the code now generates a hash from the requested filename and appends any locals that are passed on to swig
  - 0.2.2 init does not have to be called anymore this is only required if you want to override the default settings, the clearCache function is now working for memory and redis cache storage and can be called via swigMinifier.clearCache();
  - 0.2.3 You can now tell swig-minifier to not use a cache system at all and just minify.
+ - 0.2.4 Hash generation changed a bit: instead of using the basename it now uses full path. This is to avoid serving cached content when 2 html files have the same name but have unique content and are stored in different directories. 
  
 ## What it does
 

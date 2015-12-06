@@ -68,7 +68,7 @@ exports.engine = function(pathName, locals, cb) {
 			return cb(err, html);
 		}
 		
-		var hash = path.basename(pathName) + "___" + JSON.stringify(localsStripped);
+		var hash = pathName + "___" + JSON.stringify(localsStripped);
 		var key = sha256(hash);
 		
 		if(options.cacheType=="file"){
