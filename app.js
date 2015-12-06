@@ -5,17 +5,31 @@ var os = require('os');
 var path = require('path');
 var redis = require("redis");
 var NodeCache = require( "node-cache" );
-var myCache = new NodeCache({ stdTTL: 0, checkperiod: 120 });
 var sha256 = require('sha256');
-var options;
+
+var myCache = new NodeCache({ stdTTL: 0, checkperiod: 120 });
 var definedRedis = false;
+var options;
 var client;
 
+var folder = path.join(os.tmpdir(),"swig-minifier");
+fs.existsSync(folder) || fs.mkdirSync(folder);
+
 exports.init = function(sets){
-	var folder = path.join(os.tmpdir(),"swig-minifier");
-	fs.existsSync(folder) || fs.mkdirSync(folder);
 	options = sets;
-	if(!sets.dontPurge) exports.clearCache();
+	if(sets.cacheType!="memory" && sets.cacheType!="file" && sets.cacheType!="redis") throw "Unknown cacheType: '"+options.cacheType+"'";
+}
+
+exports.defineRedis = function(){
+	if(!definedRedis){
+		client = redis.createClient();
+		client.on("error", function (err) { throw err;});
+		definedRedis = true;
+	}
+}
+
+exports.defineCache = function(){
+	if(!options.cacheType) options.cacheType = "file";
 }
 
 exports.minify = function(result){
@@ -23,16 +37,27 @@ exports.minify = function(result){
 }
 
 exports.clearCache = function(){
-	if(!options.cacheType) options.cacheType = "file";
-	fs.readdirSync(path.join(os.tmpdir(),"swig-minifier")).forEach(function(file) {
-		fs.unlinkSync(path.join(os.tmpdir(),"swig-minifier",file));
-	});
+	exports.defineCache();
+	if(options.cacheType=="file"){
+		fs.readdirSync(path.join(os.tmpdir(),"swig-minifier")).forEach(function(file) {
+			fs.unlinkSync(path.join(os.tmpdir(),"swig-minifier",file));
+		});
+	}
+	if(options.cacheType=="memory"){
+		myCache.flushAll();
+	}
+	if(options.cacheType=="redis"){
+		exports.defineRedis();
+		client.flushall( function (err,val) {
+			if(err) throw err;
+		});
+	}
 }
 
 exports.engine = function(pathName, locals, cb) {
     return swig.renderFile(pathName, locals, function(err,result){
 		if(err) throw err;
-		if(!options.cacheType) options.cacheType = "file";
+		exports.defineCache();
 		var html;
 		var localsStripped = locals;
 		localsStripped.settings = "";
@@ -46,20 +71,12 @@ exports.engine = function(pathName, locals, cb) {
 				html = exports.minify(result);
 				fs.writeFile(file, html, function(err) {
 					if(!err) return cb(err, html);
-					if(err.code == "ENOENT"){
-						throw "ERROR: swig-minifier - Call the .init function before calling the .engine function. Check the documentation at NPM on how to use swig-minifier";
-					}
 					throw err;
 				}); 
 			});
-			return;
 		}
 		if(options.cacheType=="redis"){
-			if(!definedRedis){
-				client = redis.createClient();
-				client.on("error", function (err) { throw err;});
-				definedRedis = true;
-			}
+			exports.defineRedis();
 			client.get(key, function(err, value) {
 				if(err) throw err;
 				if(value) return cb(err, value);
@@ -67,7 +84,6 @@ exports.engine = function(pathName, locals, cb) {
 				client.set(key,html);
 				return cb(err, html);
 			});
-			return;
 		}
 		if(options.cacheType=="memory"){
 			myCache.get(key, function(err, value){
@@ -77,10 +93,7 @@ exports.engine = function(pathName, locals, cb) {
 				myCache.set(key, html, 0);
 				return cb(err, html);
 			});
-			return;
 		}
-		
-		throw "ERROR: swig-minifier - Unknown cacheType: '"+options.cacheType+"'";
 	});
 };
 
