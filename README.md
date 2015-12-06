@@ -22,6 +22,7 @@
  - 0.1.9 Using sha256 for cache key generation instead of md5 (less collision chance)
  - 0.2.1 Instead of generating a hash from the html contents of the requested page (amount of bytes = yikes) the code now generates a hash from the requested filename and appends any locals that are passed on to swig
  - 0.2.2 init does not have to be called anymore this is only required if you want to override the default settings, the clearCache function is now working for memory and redis cache storage and can be called via swigMinifier.clearCache();
+ - 0.2.3 You can now tell swig-minifier to not use a cache system at all and just minify.
  
 ## What it does
 
@@ -53,6 +54,7 @@ var swigMinifier = require('swig-minifier');
 var options = {cacheType:"memory"}; // Choose to cache to memory
 var options = {cacheType:"file"}; // Choose to cache to file system
 var options = {cacheType:"redis"}; // Choose to cache with redis
+var options = {cacheType:"none"}; // Choose to not use a cache system at all
 
 // Important: If you want to use swig-minifier's default settings you can choose to not call init and set options.
 swigMinifier.init(options);

@@ -17,7 +17,7 @@ fs.existsSync(folder) || fs.mkdirSync(folder);
 
 exports.init = function(sets){
 	options = sets;
-	if(sets.cacheType!="memory" && sets.cacheType!="file" && sets.cacheType!="redis") throw "Unknown cacheType: '"+options.cacheType+"'";
+	if(sets.cacheType!="memory" && sets.cacheType!="file" && sets.cacheType!="redis" && sets.cacheType!="none") throw "Unknown cacheType: '"+options.cacheType+"'";
 }
 
 exports.defineRedis = function(){
@@ -58,11 +58,19 @@ exports.engine = function(pathName, locals, cb) {
     return swig.renderFile(pathName, locals, function(err,result){
 		if(err) throw err;
 		exports.defineCache();
+		
 		var html;
 		var localsStripped = locals;
 		localsStripped.settings = "";
+		
+		if(options.cacheType=="none"){
+			html = exports.minify(result);
+			return cb(err, html);
+		}
+		
 		var hash = path.basename(pathName) + "___" + JSON.stringify(localsStripped);
 		var key = sha256(hash);
+		
 		if(options.cacheType=="file"){
 			var file = path.join(os.tmpdir(),"swig-minifier",key+".html");
 			fs.readFile(file, function(err,data){
