@@ -24,8 +24,8 @@ exports.minify = function(result){
 
 exports.clearCache = function(){
 	if(!options.cacheType) options.cacheType = "file";
-    fs.readdirSync(path.join(os.tmpdir(),"swig-minifier")).forEach(function(file) {
-        fs.unlinkSync(path.join(os.tmpdir(),"swig-minifier",file));
+	fs.readdirSync(path.join(os.tmpdir(),"swig-minifier")).forEach(function(file) {
+		fs.unlinkSync(path.join(os.tmpdir(),"swig-minifier",file));
 	});
 }
 
@@ -33,7 +33,7 @@ exports.engine = function(pathName, locals, cb) {
     return swig.renderFile(pathName, locals, function(err,result){
 		if(err) throw err;
 		if(!options.cacheType) options.cacheType = "file";
-        var html;
+		var html;
 		var key = sha256(result);
 		if(options.cacheType=="file"){
 			var file = path.join(os.tmpdir(),"swig-minifier",key+".html");
