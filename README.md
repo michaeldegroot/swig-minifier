@@ -26,6 +26,7 @@
  - 0.2.3 You can now tell swig-minifier to not use a cache system at all and just minify.
  - 0.2.4 Hash generation changed a bit: instead of using the basename it now uses full path. This is to avoid serving cached content when 2 html files have the same name but have unique content and are stored in different directories. 
  - 0.2.5 Added API to docs :). Added a hashGen option to the init function. You can now specify what algorithm to use to generate the hash cache key. Options are: md5, sha256, sha512
+ - 0.2.6 Cleaned up readme
  
 ## What it does
 
@@ -53,23 +54,10 @@ app.engine('html', swigMinifier.engine);
 // Require the module.
 var swigMinifier = require('swig-minifier');
 
-// Define options to use for swig-minifier
-var options = {cacheType:"memory"}; // Choose to cache to memory
-var options = {cacheType:"file"}; // Choose to cache to file system
-var options = {cacheType:"redis"}; // Choose to cache with redis
-var options = {cacheType:"none"}; // Choose to not use a cache system at all
-
-
-// Important: If you want to use swig-minifier's default settings you can choose to not call init and set options.
-swigMinifier.init(options);
-
 // Change your app.engine to set to render with swig-minifier
 app.engine('html', swigMinifier.engine);
-
-// At anytime you can call to clear cache via this command:
-swigMinifier.clearCache();
 ```
-### 3. Your html code will now be automatically minified and cached via file or memory.
+### 3. Your html code will now be automatically minified and cached via file, if you want more options over the module checkout the API below!
 
 ## API
 

@@ -33,7 +33,7 @@ exports.defineRedis = function(){
 }
 
 exports.defineCache = function(){
-	if(!options.cacheType) options.cacheType = "file";
+	if(!options) exports.init({cacheType:"file",hashGen:"sha256"})
 }
 
 exports.minify = function(result){
