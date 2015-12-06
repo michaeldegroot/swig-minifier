@@ -20,6 +20,7 @@
  - 0.1.7 You dont have to have redis run to use file or memory cache
  - 0.1.8 Added a clearCache function
  - 0.1.9 Using sha256 for cache key generation instead of md5 (less collision chance)
+ - 0.2.1 Instead of generating a hash from the html contents of the requested page (amount of bytes = yikes) the code now generates a hash from the requested filename and appends any locals that are passed on to swig
  
 ## What it does
 

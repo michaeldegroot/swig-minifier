@@ -34,7 +34,10 @@ exports.engine = function(pathName, locals, cb) {
 		if(err) throw err;
 		if(!options.cacheType) options.cacheType = "file";
 		var html;
-		var key = sha256(result);
+		var localsStripped = locals;
+		localsStripped.settings = "";
+		var hash = path.basename(pathName) + "___" + JSON.stringify(localsStripped);
+		var key = sha256(hash);
 		if(options.cacheType=="file"){
 			var file = path.join(os.tmpdir(),"swig-minifier",key+".html");
 			fs.readFile(file, function(err,data){
