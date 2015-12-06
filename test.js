@@ -6,7 +6,7 @@ console.log("\n\nStarting swig-minifier test\n\n");
 
 var testCache = "file";
 
-swigMinifier.init({cacheType:testCache});
+swigMinifier.init({cacheType:testCache,hashGen:"md5"});
 
 app.engine('html', swigMinifier.engine);
 app.set('view engine', 'html');

@@ -5,7 +5,7 @@ var os = require('os');
 var path = require('path');
 var redis = require("redis");
 var NodeCache = require( "node-cache" );
-var sha256 = require('sha256');
+var hashGen = require('sha256');
 
 var myCache = new NodeCache({ stdTTL: 0, checkperiod: 120 });
 var definedRedis = false;
@@ -18,6 +18,10 @@ fs.existsSync(folder) || fs.mkdirSync(folder);
 exports.init = function(sets){
 	options = sets;
 	if(sets.cacheType!="memory" && sets.cacheType!="file" && sets.cacheType!="redis" && sets.cacheType!="none") throw "Unknown cacheType: '"+options.cacheType+"'";
+	if(sets.hashGen){
+		if(sets.hashGen=="sha512") hashGen = require('sha512');
+		if(sets.hashGen=="md5") hashGen = require('md5');
+	}
 }
 
 exports.defineRedis = function(){
@@ -69,7 +73,8 @@ exports.engine = function(pathName, locals, cb) {
 		}
 		
 		var hash = pathName + "___" + JSON.stringify(localsStripped);
-		var key = sha256(hash);
+		var key = hashGen(hash);
+		if(options.hashGen=="sha512") key = key.toString('hex');
 		
 		if(options.cacheType=="file"){
 			var file = path.join(os.tmpdir(),"swig-minifier",key+".html");

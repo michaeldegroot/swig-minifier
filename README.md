@@ -4,6 +4,7 @@
 - [What it does](#what-it-does)
 - [How does it look?](#how-does-it-look)
 - [How do I use it?](#how-do-i-use-it)
+- [API](#api)
 - [Contact](#contact)
 
 ## Changelog
@@ -24,6 +25,7 @@
  - 0.2.2 init does not have to be called anymore this is only required if you want to override the default settings, the clearCache function is now working for memory and redis cache storage and can be called via swigMinifier.clearCache();
  - 0.2.3 You can now tell swig-minifier to not use a cache system at all and just minify.
  - 0.2.4 Hash generation changed a bit: instead of using the basename it now uses full path. This is to avoid serving cached content when 2 html files have the same name but have unique content and are stored in different directories. 
+ - 0.2.5 Added API to docs :). Added a hashGen option to the init function. You can now specify what algorithm to use to generate the hash cache key. Options are: md5, sha256, sha512
  
 ## What it does
 
@@ -57,6 +59,7 @@ var options = {cacheType:"file"}; // Choose to cache to file system
 var options = {cacheType:"redis"}; // Choose to cache with redis
 var options = {cacheType:"none"}; // Choose to not use a cache system at all
 
+
 // Important: If you want to use swig-minifier's default settings you can choose to not call init and set options.
 swigMinifier.init(options);
 
@@ -67,6 +70,64 @@ app.engine('html', swigMinifier.engine);
 swigMinifier.clearCache();
 ```
 ### 3. Your html code will now be automatically minified and cached via file or memory.
+
+## API
+
+###  - init(options)
+
+##### Options:
+    cacheType: file, redis, memory, none
+    hashGen: md5, sha512, 
+Call this before using the .engine function and you can setup some options for swig-minifier. If you do not call init, default settings will be used:
+
+__Default settings if init is never called:__
+
+    cacheType: file
+    hashGen: sha256
+
+__Example__
+for setting to cache to redis and generate the hash for the cache key via sha512
+
+```javascript
+var swigMinifier = require('swig-minifier');
+
+swigMinifier.init({cacheType:"redis",hashGen:"sha512"});
+```
+
+__Example__
+for setting to cache to file system, and generate the hash for the cache key via md5
+
+```javascript
+var swigMinifier = require('swig-minifier');
+
+swigMinifier.init({cacheType:"file",hashGen:"md5"});
+```
+
+###  - engine
+Use this to replace your app.engine setting
+
+__Example__
+```javascript
+var express = require('express');
+var app = require('express')();
+
+app.engine('html', swigMinifier.engine);
+```
+
+###  - clearCache
+Will clear all cache
+
+__WARNING REDIS USERS:__ this issues a flushAll command! 
+
+__Example__
+```javascript
+var swigMinifier = require('swig-minifier');
+
+swigMinifier.clearCache();
+```
+
+
+
 
 ## Contact
 You can contact me at specamps@gmail.com
