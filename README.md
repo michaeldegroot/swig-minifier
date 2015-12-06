@@ -1,3 +1,5 @@
+[![NPM](https://nodei.co/npm/swig-minifier.png?downloads=true&downloadRank=true&stars=true)](https://nodei.co/npm/swig-minifier/)
+
 **Table of Contents**
 
 - [Changelog](#changelog)
@@ -28,6 +30,7 @@
  - 0.2.5 Added API to docs :). Added a hashGen option to the init function. You can now specify what algorithm to use to generate the hash cache key. Options are: md5, sha256, sha512
  - 0.2.7 Cleaned up readme
  - 0.2.8 Added sha512 and md5 as dependencies
+ - 0.2.9 Made certain functions private because it has no use outside of the scope of the module and commented some of my code for anyone that is interested in taking a look
  
 ## What it does
 
