@@ -31,6 +31,7 @@
  - 0.2.7 Cleaned up readme
  - 0.2.8 Added sha512 and md5 as dependencies
  - 0.2.9 Made certain functions private because it has no use outside of the scope of the module and commented some of my code for anyone that is interested in taking a look
+ - 0.3.0 You can now specify where to store file cache via the options object with the variable called 'cacheFolder'
  
 ## What it does
 
@@ -68,12 +69,14 @@ app.engine('html', swigMinifier.engine);
 ###  - init(options)
 
 ##### Options:
+	cacheFolder: Full path to a folder where to store cache (optional)
     cacheType: file, redis, memory, none
     hashGen: md5, sha512, sha256
 Call this before using the .engine function and you can setup some options for swig-minifier. If you do not call init, default settings will be used:
 
 __Default settings if init is never called:__
 
+    cacheFolder: os.tmpdir()
     cacheType: file
     hashGen: sha256
 

@@ -1,10 +1,10 @@
 {
   "name": "swig-minifier",
-  "version": "0.2.9",
+  "version": "0.3.0",
   "description": "Automaticly cache and minify html output rendered by swig",
   "main": "app.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "node test.js"
   },
   "keywords": [
     "swig",

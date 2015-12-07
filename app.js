@@ -26,6 +26,10 @@ exports.init = function(sets){
 		if(sets.hashGen=="sha512") hashGen = require('sha512');
 		if(sets.hashGen=="md5") hashGen = require('md5');
 	}
+	if(sets.cacheFolder){
+		var folder = path.normalize(sets.cacheFolder);
+		fs.existsSync(folder) || fs.mkdirSync(folder);
+	}
 }
 
 exports.clearCache = function(){
@@ -72,7 +76,9 @@ exports.engine = function(pathName, locals, cb) {
 
 // File cache storage
 fileStore = function(key, result, cb){
-	var file = path.join(os.tmpdir(),"swig-minifier",key+".html");
+	var cacheFolder = path.join(os.tmpdir(),"swig-minifier");
+	if(options.cacheFolder) cacheFolder = options.cacheFolder;
+	var file = path.join(cacheFolder,key+".html");
 	fs.readFile(file, function(err,data){
 		if(!err) return cb(err, data.toString('utf8'));
 		if(err.code != 'ENOENT') throw err;
