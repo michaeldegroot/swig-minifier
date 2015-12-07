@@ -45,14 +45,14 @@ exports.clearCache = function(){
 	if(options.cacheType=="redis"){
 		defineRedis();
 		client.flushall( function (err,val) {
-			if(err) throw err;
+			if(err) throw new Error(err);
 		});
 	}
 }
 
 exports.engine = function(pathName, locals, cb) {
     return swig.renderFile(pathName, locals, function(err,result){
-		if(err) throw err;
+		if(err) throw new Error(err);
 		defineCache();
 		
 		// If we don't want cache
@@ -82,11 +82,11 @@ fileStore = function(key, result, cb){
 	var file = path.join(cacheFolder,key+".html");
 	fs.readFile(file, function(err,data){
 		if(!err) return cb(err, data.toString('utf8'));
-		if(err.code != 'ENOENT') throw err;
+		if(err.code != 'ENOENT') throw new Error(err);
 		html = minify(result);
 		fs.writeFile(file, html, function(err) {
 			if(!err) return cb(err, html);
-			throw err;
+			throw new Error(err);
 		}); 
 	});
 }
@@ -94,7 +94,7 @@ fileStore = function(key, result, cb){
 // Memory cache storage
 memoryStore = function(key, result, cb){
 	myCache.get(key, function(err, value){
-		if(err) throw err;
+		if(err) throw new Error(err);
 		if(value) return cb(err, value);
 		html = minify(result);
 		myCache.set(key, html, 0);
@@ -106,7 +106,7 @@ memoryStore = function(key, result, cb){
 redisStore = function(key, result, cb){
 	defineRedis();
 	client.get(key, function(err, value) {
-		if(err) throw err;
+		if(err) throw new Error(err);
 		if(value) return cb(err, value);
 		html = minify(result);
 		client.set(key,html);
@@ -118,7 +118,7 @@ redisStore = function(key, result, cb){
 defineRedis = function(){
 	if(!definedRedis){
 		client = redis.createClient();
-		client.on("error", function (err) { throw err;});
+		client.on("error", function (err) { throw new Error(err);});
 		definedRedis = true;
 	}
 }
