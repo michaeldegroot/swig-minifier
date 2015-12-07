@@ -5,7 +5,7 @@
 ![NPM](https://img.shields.io/badge/Node-%3E%3D0.10-green.svg)
 ![](https://img.shields.io/npm/dt/swig-minifier.svg)
 ![](https://img.shields.io/npm/l/swig-minifier.svg)
-
+ 
 **Table of Contents**
 
 - [Changelog](#changelog)
