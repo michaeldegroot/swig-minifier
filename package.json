@@ -1,6 +1,6 @@
 {
   "name": "swig-minifier",
-  "version": "0.3.0",
+  "version": "0.3.1",
   "description": "Automaticly cache and minify html output rendered by swig",
   "main": "app.js",
   "scripts": {
@@ -16,7 +16,7 @@
     "name": "Michael de Groot",
     "email": "specamps@gmail.com"
   },
-  "license": "ISC",
+  "license": "MIT",
   "dependencies": {
     "html-minifier": "^1.0.0",
     "md5": "^2.0.0",
@@ -28,6 +28,6 @@
   },
   "repository": {
     "type": "git",
-    "url": "git@bitbucket.org:michaeldegroot/swig-minifier.git"
+    "url": "git@github.com:michaeldegroot/swig-minifier.git"
   }
 }
