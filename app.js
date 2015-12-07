@@ -64,6 +64,7 @@ exports.engine = function(pathName, locals, cb) {
 		var hash = pathName + "___" + JSON.stringify(localsStripped);
 		var key = hashGen(hash);
 		if(options.hashGen=="sha512") key = key.toString('hex');
+		key = "sm_" + key;
 		
 		// File, redis and memory cacheStores
 		if(options.cacheType=="file") fileStore(key, result, cb);

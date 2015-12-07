@@ -7,7 +7,7 @@ console.log("Starting swig-minifier test");
 var testCache = "file";
 var hash = "sha512";
 
-swigMinifier.init({cacheType:testCache,hashGen:hash});
+swigMinifier.init({cacheType:testCache,hashGen:hash,cacheFolder:"C:/Users/CatsPC/Desktop/swig-minifier/cache"});
 
 app.engine('html', swigMinifier.engine);
 app.set('view engine', 'html');
