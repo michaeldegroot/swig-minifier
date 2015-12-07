@@ -1,5 +1,7 @@
 [![NPM](https://nodei.co/npm/swig-minifier.png?downloads=true&downloadRank=true&stars=true)](https://nodei.co/npm/swig-minifier/)
 
+![](https://david-dm.org/michaeldegroot/swig-minifier.svg)
+
 **Table of Contents**
 
 - [Changelog](#changelog)
@@ -32,7 +34,7 @@
  - 0.2.8 Added sha512 and md5 as dependencies
  - 0.2.9 Made certain functions private because it has no use outside of the scope of the module and commented some of my code for anyone that is interested in taking a look
  - 0.3.0 You can now specify where to store file cache via the options object with the variable called 'cacheFolder'
- - 0.3.1 Changed to a bitbucket repository. To avoid polluting/colliding with other keys in the memory or redis storage; the hash key now prepends a "sm_" string 
+ - 0.3.1 Changed to a github repository. To avoid polluting/colliding with other keys in the memory or redis storage; the hash key now prepends a "sm_" string 
  
 ## What it does
 
