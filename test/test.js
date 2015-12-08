@@ -58,19 +58,17 @@ describe("Hash Generation", function(){
 	it('md5', function() {
 		swigMinifier.init({hashGen:"md5"});
 		var key = swigMinifier.hashGen("test","test");
-		console.log(key.length);
-		assert.notEqual(swigMinifier.clearCache(), false);
+		assert.equal(key.length, 35);
 	});
 	it('sha256', function() {
 		swigMinifier.init({hashGen:"sha256"});
 		var key = swigMinifier.hashGen("test","test");
-		//console.log(key.length);
-		assert.notEqual(swigMinifier.clearCache(), false);
+		assert.equal(key.length, 67);
 	});
 	it('sha512', function() {
 		swigMinifier.init({hashGen:"sha512"});
 		var key = swigMinifier.hashGen("test","test");
-		assert.notEqual(swigMinifier.clearCache(), false);
+		assert.equal(key.length, 131);
 	});
 });
 
