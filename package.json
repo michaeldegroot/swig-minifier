@@ -4,7 +4,9 @@
   "description": "Automaticly cache and minify html output rendered by swig",
   "main": "app.js",
   "scripts": {
-    "test": "node test.js"
+    "test": "node test.js",
+    "coverage": "npm bin /istanbul cover test.js",
+    "coveralls": "npm run-script coverage && node bin/coveralls.js < coverage/lcov.info"
   },
   "keywords": [
     "swig",
@@ -31,5 +33,10 @@
   "repository": {
     "type": "git",
     "url": "git@github.com:michaeldegroot/swig-minifier.git"
+  },
+  "devDependencies": {
+    "coveralls": "^2.11.4",
+    "grunt-coveralls": "^1.0.0",
+    "mocha-lcov-reporter": "^1.0.0"
   }
 }
