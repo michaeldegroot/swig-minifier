@@ -6,13 +6,16 @@ var os = require('os');
 var path = require('path');
 var redis = require("redis");
 var NodeCache = require( "node-cache" );
-var hashGen = require('sha256');
+var sha256 = require('sha256');
+var sha512 = require('sha512');
+var md5 = require('md5');
 
 // Variable settings
 var myCache = new NodeCache({ stdTTL: 0, checkperiod: 120 });
 var definedRedis = false;
 var options;
 var client;
+var hashGen;
 
 // On require create a swig-minifier tmp dir
 var folder = path.join(os.tmpdir(),"swig-minifier");
@@ -26,8 +29,9 @@ exports.init = function(sets){
 	if(!sets.hashGen) sets.hashGen = "sha256";
 	if(sets.cacheType!="memory" && sets.cacheType!="file" && sets.cacheType!="redis" && sets.cacheType!="none") throw "Unknown cacheType: '"+options.cacheType+"'";
 	if(sets.hashGen){
-		if(sets.hashGen=="sha512") hashGen = require('sha512');
-		if(sets.hashGen=="md5") hashGen = require('md5');
+		if(sets.hashGen=="sha512") hashGen = sha512;
+		if(sets.hashGen=="md5") hashGen = md5;
+		if(sets.hashGen=="sha256") hashGen = sha256;
 	}
 	if(sets.cacheFolder){
 		var folder = path.normalize(sets.cacheFolder);
@@ -36,23 +40,23 @@ exports.init = function(sets){
 	return true;
 }
 
-exports.clearCache = function(){
-	defineCache();
+exports.clearCache = function(cb){
+	if(!cb) cb = function(){};
 	if(options.cacheType=="file"){
 		fs.readdirSync(path.join(os.tmpdir(),"swig-minifier")).forEach(function(file) {
 			fs.unlinkSync(path.join(os.tmpdir(),"swig-minifier",file));
 		});
-		return true;
+		cb(true);
 	}
 	if(options.cacheType=="memory"){
 		myCache.flushAll();
-		return true;
+		cb(true);
 	}
 	if(options.cacheType=="redis"){
 		defineRedis();
 		client.flushall( function (err,val) {
 			if(err) throw new Error(err);
-			return true;
+			cb(true);
 		});
 	}
 }
@@ -60,7 +64,6 @@ exports.clearCache = function(){
 exports.engine = function(pathName, locals, cb) {
     return swig.renderFile(pathName, locals, function(err,result){
 		if(err) throw new Error(err);
-		defineCache();
 		
 		// If we don't want cache
 		if(options.cacheType=="none") return cb(err, minify(result));
@@ -139,11 +142,6 @@ defineRedis = function(){
 		client.on("error", function (err) { throw new Error(err);});
 		definedRedis = true;
 	}
-}
-
-// Make sure init was called
-defineCache = function(){
-	if(!options) exports.init({cacheType:"file",hashGen:"sha256"})
 }
 
 // html-minify module :)

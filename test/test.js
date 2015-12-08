@@ -13,8 +13,10 @@ app.set('view engine', 'html');
 app.set('views', __dirname);
 
 app.get('/', function (req, res) {
-	res.render('test');
+	res.render('test.html');
 });
+
+var server = app.listen(3000);
  
 describe('html-minifier', function() {
 	it('Minifying', function() {
@@ -73,17 +75,27 @@ describe("Hash Generation", function(){
 describe("File Cache", function(){
 	swigMinifier.init({cacheType:"file"});
 	
-	it('Clear the cache', function() {
-		assert.equal(swigMinifier.clearCache(), true);
+	it('Clear the cache', function(done) {
+		swigMinifier.clearCache(function(result){
+			assert.equal(result, true);
+			done();
+		});
 	});
 	
-	it('Setup express', function() {
-			var request = require('request');
-			request('http://127.0.0.1:3000', function (error, response, body) {
-				if (!error && response.statusCode == 200) {
-					assert.equal(body, "");
-				}
-			})
+	it('Setup custom cache folder', function(done) {
+		swigMinifier.init({cacheType:"file",cacheFolder:os.tmpdir()});
+		swigMinifier.fileStore("test", "<!--- html comment should be removed -->", function(err,html){
+			assert.equal(html, "");
+			done();
+		});
+	});
+	
+	it('Setup express', function(done) {
+		request('http://127.0.0.1:3000', function (error, response, body) {
+			if(error) throw error;
+			assert.equal(body, "");
+			done();
+		})
 	});
 	
 	it('Insert cache key', function() {
@@ -100,10 +112,12 @@ describe("File Cache", function(){
 });
 
 describe("Redis Cache", function(){
-	swigMinifier.init({cacheType:"redis"});
-	
-	it('Clear the cache', function() {
-		assert.equal(swigMinifier.clearCache(), true);
+	it('Clear the cache', function(done) {
+		swigMinifier.init({cacheType:"redis"});
+		swigMinifier.clearCache(function(result){
+			assert.equal(result, true);
+			done();
+		});
 	});
 	
 	it('Insert cache key', function() {
@@ -120,10 +134,12 @@ describe("Redis Cache", function(){
 });
 
 describe("Memory Cache", function(){
-	swigMinifier.init({cacheType:"memory"});
-	
-	it('Clear the cache', function() {
-		assert.equal(swigMinifier.clearCache(), true);
+	it('Clear the cache', function(done) {
+		swigMinifier.init({cacheType:"memory"});
+		swigMinifier.clearCache(function(result){
+			assert.equal(result, true);
+			done();
+		});
 	});
 	
 	it('Insert cache key', function() {
@@ -142,8 +158,10 @@ describe("Memory Cache", function(){
 describe("No cache", function(){
 	swigMinifier.init({cacheType:"none"});
 	
-	it('Clear the cache', function() {
-		assert.equal(swigMinifier.clearCache(), true);
+	it('Clear the cache', function(done) {
+		swigMinifier.clearCache(function(result){
+			assert.equal(result, true);
+			done();
+		});
 	});
 });
-
