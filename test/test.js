@@ -7,6 +7,9 @@ var express = require('express');
 var app = require('express')();
 var request = require('request');
 var assert = require('assert');
+var assert = require('assert-plus');
+var path = require('path');
+var fs = require('fs');
 
 app.engine('html', swigMinifier.engine);
 app.set('view engine', 'html');
@@ -14,6 +17,15 @@ app.set('views', __dirname);
 
 app.get('/', function (req, res) {
 	res.render('test.html');
+});
+
+var htmlContent = makeid();
+
+fs.readdirSync(path.join(os.tmpdir(),"swig-minifier")).forEach(function(file) {
+	if(file=="test.html") fs.unlinkSync(path.join(os.tmpdir(),"swig-minifier",file));
+});
+fs.readdirSync(os.tmpdir()).forEach(function(file) {
+	if(file=="test.html") fs.unlinkSync(path.join(os.tmpdir(),file));
 });
 
 var server = app.listen(3000);
@@ -24,9 +36,25 @@ describe('html-minifier', function() {
 	});
 });
 
+describe("Extras", function(){
+	it('call clearCache without callback', function() {
+		assert.doesNotThrow(function() {
+			swigMinifier.clearCache();
+		},SyntaxError);
+	});
+});
+
 describe("Init", function(){
 	it('Call init with no options', function() {
 		assert.equal(swigMinifier.init(), true);
+	});
+	it('set redis options', function() {
+		assert.equal(swigMinifier.init({
+			redis:{
+				host:"127.0.0.1",
+				port:6370
+			}
+		}), true);
 	});
 	it('set hashGen to md5', function() {
 		assert.equal(swigMinifier.init({hashGen:"md5"}), true);
@@ -72,45 +100,6 @@ describe("Hash Generation", function(){
 	});
 });
 
-describe("File Cache", function(){
-	swigMinifier.init({cacheType:"file"});
-	
-	it('Clear the cache', function(done) {
-		swigMinifier.clearCache(function(result){
-			assert.equal(result, true);
-			done();
-		});
-	});
-	
-	it('Setup custom cache folder', function(done) {
-		swigMinifier.init({cacheType:"file",cacheFolder:os.tmpdir()});
-		swigMinifier.fileStore("test", "<!--- html comment should be removed -->", function(err,html){
-			assert.equal(html, "");
-			done();
-		});
-	});
-	
-	it('Setup express', function(done) {
-		request('http://127.0.0.1:3000', function (error, response, body) {
-			if(error) throw error;
-			assert.equal(body, "");
-			done();
-		})
-	});
-	
-	it('Insert cache key', function() {
-		swigMinifier.fileStore("test", "<!--- html comment should be removed -->", function(err,html){
-			assert.equal(html, "");
-		});
-	});
-	
-	it('Retrieve cache key', function() {
-		swigMinifier.fileStore("test", "<!--- html comment should be removed -->", function(err,html){
-			assert.equal(html, "");
-		});
-	});
-});
-
 describe("Redis Cache", function(){
 	it('Clear the cache', function(done) {
 		swigMinifier.init({cacheType:"redis"});
@@ -121,19 +110,22 @@ describe("Redis Cache", function(){
 	});
 	
 	it('Insert cache key', function() {
-		swigMinifier.redisStore("test", "<!--- html comment should be removed -->", function(err,html){
-			assert.equal(html, "");
+		swigMinifier.init({cacheType:"redis"});
+		swigMinifier.redisStore("test", "<!--- html comment should be removed -->"+htmlContent, function(err,html){
+			assert.equal(html, htmlContent);
 		});
 	});
 	
 	it('Retrieve cache key', function() {
-		swigMinifier.redisStore("test", "<!--- html comment should be removed -->", function(err,html){
-			assert.equal(html, "");
+		swigMinifier.init({cacheType:"redis"});
+		swigMinifier.redisStore("test", "<!--- html comment should be removed -->"+htmlContent, function(err,html){
+			assert.equal(html, htmlContent);
 		});
 	});
 });
 
 describe("Memory Cache", function(){
+	swigMinifier.init({cacheType:"none"});
 	it('Clear the cache', function(done) {
 		swigMinifier.init({cacheType:"memory"});
 		swigMinifier.clearCache(function(result){
@@ -143,14 +135,16 @@ describe("Memory Cache", function(){
 	});
 	
 	it('Insert cache key', function() {
-		swigMinifier.memoryStore("test", "<!--- html comment should be removed -->", function(err,html){
-			assert.equal(html, "");
+		swigMinifier.init({cacheType:"memory"});
+		swigMinifier.memoryStore("test", "<!--- html comment should be removed -->"+htmlContent, function(err,html){
+			assert.equal(html, htmlContent);
 		});
 	});
 	
 	it('Retrieve cache key', function() {
-		swigMinifier.memoryStore("test", "<!--- html comment should be removed -->", function(err,html){
-			assert.equal(html, "");
+		swigMinifier.init({cacheType:"memory"});
+		swigMinifier.memoryStore("test", "<!--- html comment should be removed -->"+htmlContent, function(err,html){
+			assert.equal(html, htmlContent);
 		});
 	});
 });
@@ -159,9 +153,83 @@ describe("No cache", function(){
 	swigMinifier.init({cacheType:"none"});
 	
 	it('Clear the cache', function(done) {
+		swigMinifier.init({cacheType:"none"});
 		swigMinifier.clearCache(function(result){
 			assert.equal(result, true);
 			done();
 		});
 	});
 });
+
+describe("File Cache", function(){
+	swigMinifier.init({cacheType:"file"});
+	
+	it('Clear the cache', function(done) {
+		swigMinifier.init({cacheType:"file"});
+		swigMinifier.clearCache(function(result){
+			assert.equal(result, true);
+			done();
+		});
+	});
+	
+	it('Setup express', function(done) {
+		swigMinifier.init({cacheType:"file"});
+		request('http://127.0.0.1:3000', function (error, response, body) {
+			if(error) throw error;
+			assert.equal(body, "");
+			done();
+		})
+	});
+	
+	it('Insert cache key', function() {
+		swigMinifier.init({cacheType:"file"});
+		swigMinifier.fileStore("test", "<!--- html comment should be removed -->"+htmlContent, function(err,html){
+			assert.equal(html, htmlContent);
+		});
+	});
+	
+	it('Retrieve cache key', function() {
+		swigMinifier.init({cacheType:"file"});
+		swigMinifier.fileStore("test", "<!--- html comment should be removed -->"+htmlContent, function(err,html){
+			assert.equal(html, htmlContent);
+		});
+	});
+	
+	it('Setup custom cache folder', function(done) {
+		swigMinifier.init({cacheType:"file",cacheFolder:os.tmpdir()});
+		swigMinifier.fileStore("test", "<!--- html comment should be removed -->"+htmlContent, function(err,html){
+			assert.equal(html, htmlContent);
+			done();
+		});
+	});
+	
+	it('Verifying custom cache folder location and file', function() {
+		swigMinifier.init({cacheType:"file",cacheFolder:os.tmpdir()});
+		var foundFile = false;
+		fs.readdirSync(path.join(os.tmpdir())).forEach(function(file) {
+			if(file=="test.html") foundFile = true;
+		});
+		assert.equal(foundFile,true);
+	});
+});
+
+
+
+describe("Error Handling", function(){
+	it('Wrong cacheType specified', function(){
+		assert.throws(function(){
+			swigMinifier.init({cacheType:"wrong"})
+		},Error);
+	});
+});
+
+function makeid()
+{
+    var text = "";
+    var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+
+    for( var i=0; i < 1555; i++ )
+        text += possible.charAt(Math.floor(Math.random() * possible.length));
+
+    return text;
+}

@@ -22,45 +22,51 @@ var folder = path.join(os.tmpdir(),"swig-minifier");
 fs.existsSync(folder) || fs.mkdirSync(folder);
 
 // API - this can be called from the outside scope of this module
+exports.defineRedis = function(){
+	client = redis.createClient();
+	if(options.redis) client = redis.createClient(options.redis);
+}
+
 exports.init = function(sets){
 	options = sets;
 	if(!sets) sets = {};
 	if(!sets.cacheType) sets.cacheType = "file";
 	if(!sets.hashGen) sets.hashGen = "sha256";
-	if(sets.cacheType!="memory" && sets.cacheType!="file" && sets.cacheType!="redis" && sets.cacheType!="none") throw "Unknown cacheType: '"+options.cacheType+"'";
+	if(sets.cacheType!="memory" && sets.cacheType!="file" && sets.cacheType!="redis" && sets.cacheType!="none") throw new Error('Unknown cacheType: '+options.cacheType);
 	if(sets.hashGen){
 		if(sets.hashGen=="sha512") hashGen = sha512;
 		if(sets.hashGen=="md5") hashGen = md5;
 		if(sets.hashGen=="sha256") hashGen = sha256;
 	}
 	if(sets.cacheFolder){
-		var folder = path.normalize(sets.cacheFolder);
+		folder = path.normalize(sets.cacheFolder);
 		fs.existsSync(folder) || fs.mkdirSync(folder);
 	}
+	if(sets.redis) exports.defineRedis();
 	return true;
 }
 
 exports.clearCache = function(cb){
-	if(!cb) cb = function(){};
 	if(options.cacheType=="file"){
 		fs.readdirSync(path.join(os.tmpdir(),"swig-minifier")).forEach(function(file) {
 			fs.unlinkSync(path.join(os.tmpdir(),"swig-minifier",file));
 		});
-		cb(true);
+		if(cb) cb(true,null);
 	}
 	if(options.cacheType=="memory"){
 		myCache.flushAll();
-		cb(true);
+		if(cb) cb(true,null);
 	}
 	if(options.cacheType=="redis"){
-		defineRedis();
+		exports.defineRedis();
 		client.flushall( function (err,val) {
-			if(err) throw new Error(err);
-			cb(true);
+			if(cb) cb(true,err);
 		});
 	}
+	if(options.cacheType=="none" && cb) cb(true,null);
 }
 
+// Works with app.engine this triggers the cache request, file create
 exports.engine = function(pathName, locals, cb) {
     return swig.renderFile(pathName, locals, function(err,result){
 		if(err) throw new Error(err);
@@ -80,6 +86,7 @@ exports.engine = function(pathName, locals, cb) {
 	});
 };
 
+// Hash generation for cache key
 exports.hashGen = function(pathName,locals){
 	var localsStripped = locals;
 	localsStripped.settings = "";
@@ -123,7 +130,7 @@ exports.memoryStore = function(key, result, cb){
 
 // Redis cache storage
 exports.redisStore = function(key, result, cb){
-	defineRedis();
+	exports.defineRedis();
 	client.get(key, function(err, value) {
 		if(err) throw new Error(err);
 		if(value) return cb(err, value);
@@ -133,18 +140,8 @@ exports.redisStore = function(key, result, cb){
 	});
 }
 
-// Internal functions
 
-// Make sure redis is defined
-defineRedis = function(){
-	if(!definedRedis){
-		client = redis.createClient();
-		client.on("error", function (err) { throw new Error(err);});
-		definedRedis = true;
-	}
-}
-
-// html-minify module :)
+// Html-minify wrapper
 minify = function(result){
 	return htmlminify(result, {minifyJS: true, minifyCSS: true, removeComments: true, collapseWhitespace: true});
 }
