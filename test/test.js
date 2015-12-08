@@ -1,0 +1,149 @@
+var express = require('express');
+var app = require('express')();
+var request = require('request');
+var swigMinifier = require('../app');
+var os = require('os');
+var express = require('express');
+var app = require('express')();
+var request = require('request');
+var assert = require('assert');
+
+app.engine('html', swigMinifier.engine);
+app.set('view engine', 'html');
+app.set('views', __dirname);
+
+app.get('/', function (req, res) {
+	res.render('test');
+});
+ 
+describe('html-minifier', function() {
+	it('Minifying', function() {
+		assert.equal(swigMinifier.min("<!--- Html comment should be removed -->"), "");
+	});
+});
+
+describe("Init", function(){
+	it('Call init with no options', function() {
+		assert.equal(swigMinifier.init(), true);
+	});
+	it('set hashGen to md5', function() {
+		assert.equal(swigMinifier.init({hashGen:"md5"}), true);
+	});
+	it('set hashGen to sha256', function() {
+		assert.equal(swigMinifier.init({hashGen:"sha256"}), true);
+	});
+	it('set hashGen to sha512', function() {
+		assert.equal(swigMinifier.init({hashGen:"sha512"}), true);
+	});
+	it('set cacheType to file', function() {
+		assert.equal(swigMinifier.init({cacheType:"file"}), true);
+	});
+	it('set cacheType to memory', function() {
+		assert.equal(swigMinifier.init({cacheType:"memory"}), true);
+	});
+	it('set cacheType to redis', function() {
+		assert.equal(swigMinifier.init({cacheType:"redis"}), true);
+	});
+	it('set cacheType to none', function() {
+		assert.equal(swigMinifier.init({cacheType:"none"}), true);
+	});
+	it('set cacheFolder', function() {
+		assert.equal(swigMinifier.init({cacheFolder:os.tmpdir()}), true);
+	});
+});
+
+describe("Hash Generation", function(){
+	it('md5', function() {
+		swigMinifier.init({hashGen:"md5"});
+		var key = swigMinifier.hashGen("test","test");
+		assert.notEqual(swigMinifier.clearCache(), false);
+	});
+	it('sha256', function() {
+		swigMinifier.init({hashGen:"sha256"});
+		var key = swigMinifier.hashGen("test","test");
+		assert.notEqual(swigMinifier.clearCache(), false);
+	});
+	it('sha512', function() {
+		swigMinifier.init({hashGen:"sha512"});
+		var key = swigMinifier.hashGen("test","test");
+		assert.notEqual(swigMinifier.clearCache(), false);
+	});
+});
+
+describe("File Cache", function(){
+	swigMinifier.init({cacheType:"file"});
+	
+	it('Clear the cache', function() {
+		assert.equal(swigMinifier.clearCache(), true);
+	});
+	
+	it('Setup express', function() {
+			var request = require('request');
+			request('http://127.0.0.1:3000', function (error, response, body) {
+				if (!error && response.statusCode == 200) {
+					assert.equal(body, "");
+				}
+			})
+	});
+	
+	it('Insert cache key', function() {
+		swigMinifier.fileStore("test", "<!--- html comment should be removed -->", function(err,html){
+			assert.equal(html, "");
+		});
+	});
+	
+	it('Retrieve cache key', function() {
+		swigMinifier.fileStore("test", "<!--- html comment should be removed -->", function(err,html){
+			assert.equal(html, "");
+		});
+	});
+});
+
+describe("Redis Cache", function(){
+	swigMinifier.init({cacheType:"redis"});
+	
+	it('Clear the cache', function() {
+		assert.equal(swigMinifier.clearCache(), true);
+	});
+	
+	it('Insert cache key', function() {
+		swigMinifier.redisStore("test", "<!--- html comment should be removed -->", function(err,html){
+			assert.equal(html, "");
+		});
+	});
+	
+	it('Retrieve cache key', function() {
+		swigMinifier.redisStore("test", "<!--- html comment should be removed -->", function(err,html){
+			assert.equal(html, "");
+		});
+	});
+});
+
+describe("Memory Cache", function(){
+	swigMinifier.init({cacheType:"memory"});
+	
+	it('Clear the cache', function() {
+		assert.equal(swigMinifier.clearCache(), true);
+	});
+	
+	it('Insert cache key', function() {
+		swigMinifier.memoryStore("test", "<!--- html comment should be removed -->", function(err,html){
+			assert.equal(html, "");
+		});
+	});
+	
+	it('Retrieve cache key', function() {
+		swigMinifier.memoryStore("test", "<!--- html comment should be removed -->", function(err,html){
+			assert.equal(html, "");
+		});
+	});
+});
+
+describe("No cache", function(){
+	swigMinifier.init({cacheType:"none"});
+	
+	it('Clear the cache', function() {
+		assert.equal(swigMinifier.clearCache(), true);
+	});
+});
+

@@ -21,6 +21,9 @@ fs.existsSync(folder) || fs.mkdirSync(folder);
 // API - this can be called from the outside scope of this module
 exports.init = function(sets){
 	options = sets;
+	if(!sets) sets = {};
+	if(!sets.cacheType) sets.cacheType = "file";
+	if(!sets.hashGen) sets.hashGen = "sha256";
 	if(sets.cacheType!="memory" && sets.cacheType!="file" && sets.cacheType!="redis" && sets.cacheType!="none") throw "Unknown cacheType: '"+options.cacheType+"'";
 	if(sets.hashGen){
 		if(sets.hashGen=="sha512") hashGen = require('sha512');
@@ -30,6 +33,7 @@ exports.init = function(sets){
 		var folder = path.normalize(sets.cacheFolder);
 		fs.existsSync(folder) || fs.mkdirSync(folder);
 	}
+	return true;
 }
 
 exports.clearCache = function(){
@@ -38,14 +42,17 @@ exports.clearCache = function(){
 		fs.readdirSync(path.join(os.tmpdir(),"swig-minifier")).forEach(function(file) {
 			fs.unlinkSync(path.join(os.tmpdir(),"swig-minifier",file));
 		});
+		return true;
 	}
 	if(options.cacheType=="memory"){
 		myCache.flushAll();
+		return true;
 	}
 	if(options.cacheType=="redis"){
 		defineRedis();
 		client.flushall( function (err,val) {
 			if(err) throw new Error(err);
+			return true;
 		});
 	}
 }
@@ -59,24 +66,33 @@ exports.engine = function(pathName, locals, cb) {
 		if(options.cacheType=="none") return cb(err, minify(result));
 		
 		// Hash generation
-		var localsStripped = locals;
-		localsStripped.settings = "";
-		var hash = pathName + "___" + JSON.stringify(localsStripped);
-		var key = hashGen(hash);
-		if(options.hashGen=="sha512") key = key.toString('hex');
-		key = "sm_" + key;
+		var key = exports.hashGen(pathName,locals);
 		
 		// File, redis and memory cacheStores
-		if(options.cacheType=="file") fileStore(key, result, cb);
-		if(options.cacheType=="redis") redisStore(key, result, cb);
-		if(options.cacheType=="memory") memoryStore(key, result, cb);
+		if(options.cacheType=="file") exports.fileStore(key, result, cb);
+		if(options.cacheType=="redis") exports.redisStore(key, result, cb);
+		if(options.cacheType=="memory") exports.memoryStore(key, result, cb);
+		
+		return true;
 	});
 };
 
-// Internal functions
+exports.hashGen = function(pathName,locals){
+	var localsStripped = locals;
+	localsStripped.settings = "";
+	var hash = pathName + "___" + JSON.stringify(localsStripped);
+	var key = hashGen(hash);
+	if(options.hashGen=="sha512") key = key.toString('hex');
+	key = "sm_" + key;
+	return key;
+}
+
+exports.min = function(result){
+	return minify(result);
+}
 
 // File cache storage
-fileStore = function(key, result, cb){
+exports.fileStore = function(key, result, cb){
 	var cacheFolder = path.join(os.tmpdir(),"swig-minifier");
 	if(options.cacheFolder) cacheFolder = options.cacheFolder;
 	var file = path.join(cacheFolder,key+".html");
@@ -92,7 +108,7 @@ fileStore = function(key, result, cb){
 }
 
 // Memory cache storage
-memoryStore = function(key, result, cb){
+exports.memoryStore = function(key, result, cb){
 	myCache.get(key, function(err, value){
 		if(err) throw new Error(err);
 		if(value) return cb(err, value);
@@ -103,7 +119,7 @@ memoryStore = function(key, result, cb){
 }
 
 // Redis cache storage
-redisStore = function(key, result, cb){
+exports.redisStore = function(key, result, cb){
 	defineRedis();
 	client.get(key, function(err, value) {
 		if(err) throw new Error(err);
@@ -113,6 +129,8 @@ redisStore = function(key, result, cb){
 		return cb(err, html);
 	});
 }
+
+// Internal functions
 
 // Make sure redis is defined
 defineRedis = function(){
