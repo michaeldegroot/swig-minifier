@@ -11,14 +11,6 @@ var assert = require('assert-plus');
 var path = require('path');
 var fs = require('fs');
 
-app.engine('html', swigMinifier.engine);
-app.set('view engine', 'html');
-app.set('views', __dirname);
-
-app.get('/', function (req, res) {
-	res.render('test.html');
-});
-
 var htmlContent = makeid();
 
 fs.readdirSync(path.join(os.tmpdir(),"swig-minifier")).forEach(function(file) {
@@ -27,8 +19,6 @@ fs.readdirSync(path.join(os.tmpdir(),"swig-minifier")).forEach(function(file) {
 fs.readdirSync(os.tmpdir()).forEach(function(file) {
 	if(file=="test.html") fs.unlinkSync(path.join(os.tmpdir(),file));
 });
-
-var server = app.listen(3000);
  
 describe('html-minifier', function() {
 	it('Minifying', function() {
@@ -172,11 +162,20 @@ describe("File Cache", function(){
 		});
 	});
 	
-	it('Setup express', function(done) {
+	it('Express integration', function(done) {
 		swigMinifier.init({cacheType:"file"});
+		app.engine('html', swigMinifier.engine);
+		app.set('view engine', 'html');
+		app.set('views', __dirname);
+
+		app.get('/', function (req, res) {
+			res.render('file.html');
+		});
+
+		var server = app.listen(3000);
 		request('http://127.0.0.1:3000', function (error, response, body) {
 			if(error) throw error;
-			assert.equal(body, "");
+			assert.equal(body, "file");
 			done();
 		})
 	});

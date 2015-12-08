@@ -69,7 +69,7 @@ exports.clearCache = function(cb){
 // Works with app.engine this triggers the cache request, file create
 exports.engine = function(pathName, locals, cb) {
     return swig.renderFile(pathName, locals, function(err,result){
-		if(err) throw new Error(err);
+		if(err) cb(err,false);
 		
 		// If we don't want cache
 		if(options.cacheType=="none") return cb(err, minify(result));

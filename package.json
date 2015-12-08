@@ -1,12 +1,16 @@
 {
   "name": "swig-minifier",
-  "version": "0.3.5",
+  "version": "0.3.6",
   "description": "Automaticly cache and minify html output rendered by swig",
   "main": "app.js",
   "scripts": {
     "test": "mocha",
     "cover": "istanbul cover ./node_modules/mocha/bin/_mocha -- -R spec ./test/*",
     "coveralls": "npm bin /istanbul cover ./node_modules/mocha/bin/_mocha -- -R spec ./test/* && node node_modules/coveralls/bin/coveralls.js < coverage/lcov.info"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:michaeldegroot/swig-minifier.git"
   },
   "keywords": [
     "swig",
@@ -27,10 +31,6 @@
     "sha256": "^0.2.0",
     "sha512": "0.0.1",
     "swig": "^1.4.2"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git@github.com:michaeldegroot/swig-minifier.git"
   },
   "devDependencies": {
     "assert": "^1.3.0",
