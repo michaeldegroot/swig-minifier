@@ -6,3 +6,5 @@ node_js:
   - "0.12"
   - "0.11"
   - "0.10"
+  
+after_script: NODE_ENV=test istanbul cover test.js --report lcovonly -- -R spec && cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js && rm -rf ./coverage
