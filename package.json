@@ -4,7 +4,7 @@
   "description": "Automaticly cache and minify html output rendered by swig",
   "main": "app.js",
   "scripts": {
-    "test": "node test.js",
+    "test": "istanbul cover ./node_modules/mocha/bin/_mocha -- -R spec ./test/*",
     "cover": "istanbul cover ./node_modules/mocha/bin/_mocha -- -R spec ./test/*",
     "coveralls": "npm bin /istanbul cover ./node_modules/mocha/bin/_mocha -- -R spec ./test/* && node node_modules/coveralls/bin/coveralls.js < coverage/lcov.info"
   },
