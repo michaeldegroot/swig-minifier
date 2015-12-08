@@ -2,6 +2,7 @@
 
 [ ![Image](https://david-dm.org/michaeldegroot/swig-minifier.svg "deps") ](https://david-dm.org/michaeldegroot/swig-minifier "david-dm")
 [ ![Image](https://travis-ci.org/michaeldegroot/swig-minifier.svg?branch=master "testing") ](https://travis-ci.org/michaeldegroot/swig-minifier "travis-ci")
+[![Coverage Status](https://coveralls.io/repos/michaeldegroot/swig-minifier/badge.svg?branch=master&service=github)](https://coveralls.io/github/michaeldegroot/swig-minifier?branch=master)
 ![NPM](https://img.shields.io/badge/Node-%3E%3D0.10-green.svg)
 ![](https://img.shields.io/npm/dt/swig-minifier.svg)
 ![](https://img.shields.io/npm/l/swig-minifier.svg)
