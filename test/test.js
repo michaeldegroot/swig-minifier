@@ -64,13 +64,12 @@ describe("Hash Generation", function(){
 	it('sha256', function() {
 		swigMinifier.init({hashGen:"sha256"});
 		var key = swigMinifier.hashGen("test","test");
-		console.log(key.length);
+		//console.log(key.length);
 		assert.notEqual(swigMinifier.clearCache(), false);
 	});
 	it('sha512', function() {
 		swigMinifier.init({hashGen:"sha512"});
 		var key = swigMinifier.hashGen("test","test");
-		console.log(key.length);
 		assert.notEqual(swigMinifier.clearCache(), false);
 	});
 });
