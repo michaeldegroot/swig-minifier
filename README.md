@@ -23,27 +23,26 @@ ___
 
 ##### 2. Do awesome stuff
 ```javascript
-// Require the module.
 var swigMinifier = require('swig-minifier');
 
 // Change your app.engine to set to render with swig-minifier
 app.engine('html', swigMinifier.engine);
 ```
-###### Your html code will now be automatically minified and cached via file, If you want more options over the module checkout the API below!
+_Your html code will now be automatically minified and cached via file, If you want more options over the module checkout the __API__ below!_
 ___
 ## API
 
 ###  .init(Object)
-
-##### Options:
-	cacheFolder: Full path to a folder where to store cache (optional)
-    cacheType: file, redis, memory, none
-    hashGen: md5, sha512, sha256
+    {
+	    cacheFolder: "" // Full path to a folder where to store cache (optional)
+        cacheType: ""   // file, redis, memory, none
+        hashGen: ""     // md5, sha512, sha256
+    }
 Call this before using the .engine function and you can setup some options for swig-minifier. If you do not call init, default settings will be used:
 
-    cacheFolder: os.tmpdir()
-    cacheType: file
-    hashGen: sha256
+    cacheFolder:    os.tmpdir() + "/swig-minfier/"
+    cacheType:      "file"
+    hashGen:        "sha256"
 
 __Example__
 for setting to cache to redis and generate the hash for the cache key via sha512
@@ -51,7 +50,10 @@ for setting to cache to redis and generate the hash for the cache key via sha512
 ```javascript
 var swigMinifier = require('swig-minifier');
 
-swigMinifier.init({cacheType:"redis",hashGen:"sha512"});
+swigMinifier.init({
+    cacheType:"redis",
+    hashGen:"sha512"
+});
 ```
 
 __Example__
@@ -60,7 +62,10 @@ for setting to cache to file system, and generate the hash for the cache key via
 ```javascript
 var swigMinifier = require('swig-minifier');
 
-swigMinifier.init({cacheType:"file",hashGen:"md5"});
+swigMinifier.init({
+    cacheType:"file",
+    hashGen:"md5"
+});
 ```
 ___
 ###  .engine
