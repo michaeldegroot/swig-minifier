@@ -70,6 +70,7 @@ __Example__
 ```javascript
 var express = require('express');
 var app = require('express')();
+var swigMinifier = require('swig-minifier');
 
 app.engine('html', swigMinifier.engine);
 ```
