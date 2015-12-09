@@ -1,5 +1,4 @@
-[![](https://nodei.co/npm/swig-minifier.png?downloads=true&downloadRank=true&stars=true)](https://www.npmjs.com/package/swig-minifier)
-
+[![](https://nodei.co/npm/swig-minifier.png?downloads=true&downloadRank=true&stars=true)](https://www.npmjs.com/package/swig-minifier)   
 [![](https://david-dm.org/michaeldegroot/swig-minifier.svg "deps") ](https://david-dm.org/michaeldegroot/swig-minifier "david-dm")
 [![](https://travis-ci.org/michaeldegroot/swig-minifier.svg?branch=master "testing") ](https://travis-ci.org/michaeldegroot/swig-minifier "travis-ci")
 [![](https://coveralls.io/repos/michaeldegroot/swig-minifier/badge.svg?branch=master&service=github)](https://coveralls.io/github/michaeldegroot/swig-minifier?branch=master)
