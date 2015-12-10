@@ -21,32 +21,35 @@ ___
     npm install swig-minifier
 
 ##### 2. Do awesome stuff
-```javascript
+```js
 var swigMinifier = require('swig-minifier');
 
 // Change your app.engine to set to render with swig-minifier
 app.engine('html', swigMinifier.engine);
 ```
-_Your html code will now be automatically minified and cached via file, If you want more options over the module checkout the __API__ below!_
+_Your html code will now be automatically minified and cached via file, If you want more options over the module checkout the_  __API__  _below!_
 ___
 ## API
 
 ###  .init(Object)
-    {
-	    cacheFolder: "" // Full path to a folder where to store cache (optional)
-        cacheType: ""   // file, redis, memory, none
-        hashGen: ""     // md5, sha512, sha256
-    }
+```js
+{
+    cacheFolder:    String  // Full path to a folder where to store cache (optional)
+    cacheType:      String  // file, redis, memory, none
+    hashGen:        String  // md5, sha512, sha256
+}
+```
 Call this before using the .engine function and you can setup some options for swig-minifier. If you do not call init, default settings will be used:
-
-    cacheFolder:    os.tmpdir() + "/swig-minfier/"
-    cacheType:      "file"
-    hashGen:        "sha256"
+```js
+cacheFolder:    os.tmpdir() + "/swig-minfier/"
+cacheType:      "file"
+hashGen:        "sha256"
+```
 
 __Example__
 for setting to cache to redis and generate the hash for the cache key via sha512
 
-```javascript
+```js
 var swigMinifier = require('swig-minifier');
 
 swigMinifier.init({
@@ -58,7 +61,7 @@ swigMinifier.init({
 __Example__
 for setting to cache to file system, and generate the hash for the cache key via md5
 
-```javascript
+```js
 var swigMinifier = require('swig-minifier');
 
 swigMinifier.init({
@@ -71,7 +74,7 @@ ___
 Use this to replace your app.engine setting
 
 __Example__
-```javascript
+```js
 var express = require('express');
 var app = require('express')();
 var swigMinifier = require('swig-minifier');
