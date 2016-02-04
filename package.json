@@ -26,7 +26,7 @@
   "dependencies": {
     "html-minifier": "^1.1.1",
     "md5": "^2.0.0",
-    "node-cache": "^3.0.1",
+    "node-cache": "^3.1.0",
     "redis": "^2.4.2",
     "sha256": "^0.2.0",
     "sha512": "0.0.1",
@@ -34,12 +34,12 @@
   },
   "devDependencies": {
     "assert": "^1.3.0",
-    "assert-plus": "^0.2.0",
+    "assert-plus": "^1.0.0",
     "coveralls": "^2.11.6",
-    "express": "^4.13.3",
+    "express": "^4.13.4",
     "istanbul": "^0.4.2",
     "mocha": "^2.4.5",
     "mocha-lcov-reporter": "^1.0.0",
-    "request": "^2.67.0"
+    "request": "^2.69.0"
   }
 }
