@@ -36,7 +36,7 @@
     "assert": "^1.3.0",
     "assert-plus": "^1.0.0",
     "coveralls": "^2.11.6",
-    "express": "^4.13.4",
+    "express": "^4.14.1",
     "istanbul": "^0.4.5",
     "mocha": "^3.0.2",
     "mocha-lcov-reporter": "^1.1.0",
